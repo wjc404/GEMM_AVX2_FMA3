@@ -4,10 +4,10 @@ SRCFILE = src/gemm_kernel.S src/gemm_driver.c
 
 default: DGEMM.so SGEMM.so
 
-DGEMM.so: $SRCFILE
+DGEMM.so: $(SRCFILE)
 	$(CC) -DDOUBLE $(CCFLAGS) $^ -o $@
   
-SGEMM.so: $SRCFILE
+SGEMM.so: $(SRCFILE)
 	$(CC) $(CCFLAGS) $^ -o $@
 
 clean:
