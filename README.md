@@ -1,5 +1,5 @@
 # GEMM_AVX2_FMA3
-sgemm and dgemm subroutine for large matrices, slightly outperform Intel MKL(2019 update 4).
+high-performance sgemm and dgemm subroutine for large matrices, slightly outperform Intel MKL(2019 update 4).
 
 Instructions: AVX2, FMA3
 
