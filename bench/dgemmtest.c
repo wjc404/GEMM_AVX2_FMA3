@@ -238,8 +238,8 @@ int main(int argc, char* argv[]) // command line: ./dgemmtest [niter] [m] [n] [k
         printf("SUMMARY of the test:\n");
 	printf("FP operation count per dgemm call:%ld\n",ops);
         printf("lib1: %s.\n",dgemmpath1);
-        printf("MKL library: 2018, linked with libgomp, 32-bit integer interface.\n");
-	printf("Iter\tSeconds-MKL\tGFLOPS-MKL\tSeconds-lib1\tGFLOPS-lib1\n");
+        printf("MKL library: 2019 update 4, linked with libgomp, 32-bit integer interface.\n");
+	printf("Iter\tSeconds-MKL2019\tGFLOPS-MKL2019\tSeconds-lib1\tGFLOPS-lib1\n");
         for (i=0; i<niters; ++i) {
 	    walltime1 = tscs[2*i]/1000000; //wall time in sec (routine 1)
 	    walltime2 = tscs[2*i+1]/1000000; //wall time in sec (routine 2)
