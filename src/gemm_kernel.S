@@ -358,6 +358,7 @@ gemmblkregccc:
     UPDATECBLK_1col
     movq CIP,CL
 .Louter_gemmblkregccc_last:
+    PREFm12 CS
     prefetcht1 (CL)
     prefetcht1 64(CL)
     prefetcht1 95(CL)
@@ -389,10 +390,10 @@ gemmblkregccc:
 
     incq %r12
     STORECBLK_1col
-    PREFm12 CS
     UPDATECBLK_1col
     cmpq $256,%r12
     jb .Louter_gemmblkregccc_last
+
     movq CIP,CS
     FIN_C_3col
 
