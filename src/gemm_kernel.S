@@ -123,9 +123,9 @@
 .endm
 
 .macro CLEAR r1,r2,r3
-    vxorps \r1,\r1,\r1
-    vxorps \r2,\r2,\r2
-    vxorps \r3,\r3,\r3
+    vpxor \r1,\r1,\r1
+    vpxor \r2,\r2,\r2
+    vpxor \r3,\r3,\r3
 .endm
 
 .macro UPDATECBLK_1col
