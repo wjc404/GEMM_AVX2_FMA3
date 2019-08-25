@@ -88,7 +88,7 @@
     _mm_prefetch((char *)(atemp+288/IRREG_SIZE),_MM_HINT_T0);\
     KERNELk1\
 }
-void gemmblkirregkccc(FLOAT * __restrict__ ablk,FLOAT * __restrict__ bblk,FLOAT * __restrict__ cstartpos,int ldc,int kdim,FLOAT * __restrict__ beta){
+static void gemmblkirregkccc(FLOAT * __restrict__ ablk,FLOAT * __restrict__ bblk,FLOAT * __restrict__ cstartpos,int ldc,int kdim,FLOAT * __restrict__ beta){
   register IRREG_VEC_TYPE a1,a2,a3,b1,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12;FLOAT *atemp,*btemp,*ctemp,*cpref;int ccol,acol;
   ctemp=cstartpos;btemp=bblk;
   for(ccol=0;ccol<BlkDimN;ccol+=4){//loop over cblk-columns, calculate 4 columns of cblk in each iteration.
@@ -113,7 +113,7 @@ void gemmblkirregkccc(FLOAT * __restrict__ ablk,FLOAT * __restrict__ bblk,FLOAT 
    STORE_C_1col(c10,c11,c12)
   }
 }
-void gemmblkirregnccc(FLOAT * __restrict__ ablk,FLOAT * __restrict__ bblk,FLOAT * __restrict__ cstartpos,int ldc,int ndim){
+static void gemmblkirregnccc(FLOAT * __restrict__ ablk,FLOAT * __restrict__ bblk,FLOAT * __restrict__ cstartpos,int ldc,int ndim){
   register IRREG_VEC_TYPE a1,a2,a3,b1,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12;
   FLOAT *atemp,*btemp,*ctemp,*cpref,*apref;int ccol,acol;
   ctemp=cstartpos;btemp=bblk;
@@ -151,7 +151,7 @@ void gemmblkirregnccc(FLOAT * __restrict__ ablk,FLOAT * __restrict__ bblk,FLOAT 
    STORE_C_1col(c1,c2,c3)
   }
 }
-void gemmblkirregccc(FLOAT * __restrict__ ablk,FLOAT * __restrict__ bblk,FLOAT * __restrict__ cstartpos,int ldc,int mdim,int ndim,int kdim,FLOAT * __restrict__ beta){
+static void gemmblkirregccc(FLOAT * __restrict__ ablk,FLOAT * __restrict__ bblk,FLOAT * __restrict__ cstartpos,int ldc,int mdim,int ndim,int kdim,FLOAT * __restrict__ beta){
   register IRREG_VEC_TYPE a1,a2,a3,b1,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12;__m256i ml1,ml2,ml3;
   FLOAT *atemp,*btemp,*ctemp,*cpref,*apref;int ccol,acol;
 #ifdef DOUBLE
