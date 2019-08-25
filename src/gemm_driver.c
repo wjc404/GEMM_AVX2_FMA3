@@ -23,7 +23,7 @@
 extern void gemmblkregccc(FLOAT *abufferctpos,FLOAT *bblk,FLOAT *cstartpos,int ldc);//carry >90% gemm calculations
 extern void gemmblktailccc(FLOAT *abufferctpos,FLOAT *bblk,FLOAT *cstartpos,int ldc,int mdim);
 extern void timedelay();//produce nothing besides a delay(~3 us), with no system calls
-void synproc(int tid,int threads,int *workprogress){//workprogress[] must be shared among all threads
+static void synproc(int tid,int threads,int *workprogress){//workprogress[] must be shared among all threads
   int waitothers,ctid,temp;
   workprogress[16*tid]++;
   temp=workprogress[16*tid];
@@ -34,27 +34,27 @@ void synproc(int tid,int threads,int *workprogress){//workprogress[] must be sha
     }
   }
 }//this function is for synchronization of threads before/after load_abuffer
-void load_abuffer_ac(FLOAT *aheadpos,FLOAT *abuffer,int LDA,int BlksM,int EdgeM){
+static void load_abuffer_ac(FLOAT *aheadpos,FLOAT *abuffer,int LDA,int BlksM,int EdgeM){
   int i;
   for(i=0;i<BlksM-1;i++) load_reg_a_c(aheadpos+i*BlkDimM,abuffer+i*BlkDimM*BlkDimK,LDA);
   load_tail_a_c(aheadpos+i*BlkDimM,abuffer+i*BlkDimM*BlkDimK,LDA,EdgeM);
 }
-void load_abuffer_ar(FLOAT *aheadpos,FLOAT *abuffer,int LDA,int BlksM,int EdgeM){
+static void load_abuffer_ar(FLOAT *aheadpos,FLOAT *abuffer,int LDA,int BlksM,int EdgeM){
   int i;
   for(i=0;i<BlksM-1;i++) load_reg_a_r(aheadpos+i*BlkDimM*LDA,abuffer+i*BlkDimM*BlkDimK,LDA);
   load_tail_a_r(aheadpos+i*BlkDimM*LDA,abuffer+i*BlkDimM*BlkDimK,LDA,EdgeM);
 }
-void load_abuffer_irregk_ac(FLOAT *aheadpos,FLOAT *abuffer,int LDA,int BlksM,int EdgeM,int kdim){
+static void load_abuffer_irregk_ac(FLOAT *aheadpos,FLOAT *abuffer,int LDA,int BlksM,int EdgeM,int kdim){
   int i;
   for(i=0;i<BlksM-1;i++) load_irregk_a_c(aheadpos+i*BlkDimM,abuffer+i*BlkDimM*kdim,LDA,kdim);
   load_irreg_a_c(aheadpos+i*BlkDimM,abuffer+i*BlkDimM*kdim,LDA,EdgeM,kdim);
 }
-void load_abuffer_irregk_ar(FLOAT *aheadpos,FLOAT *abuffer,int LDA,int BlksM,int EdgeM,int kdim){
+static void load_abuffer_irregk_ar(FLOAT *aheadpos,FLOAT *abuffer,int LDA,int BlksM,int EdgeM,int kdim){
   int i;
   for(i=0;i<BlksM-1;i++) load_irregk_a_r(aheadpos+i*BlkDimM*LDA,abuffer+i*BlkDimM*kdim,LDA,kdim);
   load_irreg_a_r(aheadpos+i*BlkDimM*LDA,abuffer+i*BlkDimM*kdim,LDA,EdgeM,kdim);
 }
-void gemmcolumn(FLOAT *abuffer,FLOAT *bblk,FLOAT *cheadpos,int BlksM,int EdgeM,int LDC){
+static void gemmcolumn(FLOAT *abuffer,FLOAT *bblk,FLOAT *cheadpos,int BlksM,int EdgeM,int LDC){
   int MCT=0;int BlkCtM;
   for(BlkCtM=0;BlkCtM<BlksM-1;BlkCtM++){
     gemmblkregccc(abuffer+MCT*BlkDimK,bblk,cheadpos+MCT,LDC);
@@ -62,7 +62,7 @@ void gemmcolumn(FLOAT *abuffer,FLOAT *bblk,FLOAT *cheadpos,int BlksM,int EdgeM,i
   }
   gemmblktailccc(abuffer+MCT*BlkDimK,bblk,cheadpos+MCT,LDC,EdgeM);
 }
-void gemmcolumnirregn(FLOAT *abuffer,FLOAT *bblk,FLOAT *cheadpos,int BlksM,int EdgeM,int LDC,int ndim){
+static void gemmcolumnirregn(FLOAT *abuffer,FLOAT *bblk,FLOAT *cheadpos,int BlksM,int EdgeM,int LDC,int ndim){
   int MCT=0;int BlkCtM;FLOAT beta=1.0;
   for(BlkCtM=0;BlkCtM<BlksM-1;BlkCtM++){
     gemmblkirregnccc(abuffer+MCT*BlkDimK,bblk,cheadpos+MCT,LDC,ndim);
@@ -70,7 +70,7 @@ void gemmcolumnirregn(FLOAT *abuffer,FLOAT *bblk,FLOAT *cheadpos,int BlksM,int E
   }
   gemmblkirregccc(abuffer+MCT*BlkDimK,bblk,cheadpos+MCT,LDC,EdgeM,ndim,BlkDimK,&beta);
 }
-void gemmcolumnirregk(FLOAT *abuffer,FLOAT *bblk,FLOAT *cheadpos,int BlksM,int EdgeM,int LDC,int kdim,FLOAT *beta){
+static void gemmcolumnirregk(FLOAT *abuffer,FLOAT *bblk,FLOAT *cheadpos,int BlksM,int EdgeM,int LDC,int kdim,FLOAT *beta){
   int MCT=0;int BlkCtM;
   for(BlkCtM=0;BlkCtM<BlksM-1;BlkCtM++){
     gemmblkirregkccc(abuffer+MCT*kdim,bblk,cheadpos+MCT,LDC,kdim,beta);
@@ -78,7 +78,7 @@ void gemmcolumnirregk(FLOAT *abuffer,FLOAT *bblk,FLOAT *cheadpos,int BlksM,int E
   }
   gemmblkirregccc(abuffer+MCT*kdim,bblk,cheadpos+MCT,LDC,EdgeM,BlkDimN,kdim,beta);
 }
-void gemmcolumnirreg(FLOAT *abuffer,FLOAT *bblk,FLOAT *cheadpos,int BlksM,int EdgeM,int LDC,int kdim,int ndim,FLOAT *beta){
+static void gemmcolumnirreg(FLOAT *abuffer,FLOAT *bblk,FLOAT *cheadpos,int BlksM,int EdgeM,int LDC,int kdim,int ndim,FLOAT *beta){
   int MCT=0;int BlkCtM;
   for(BlkCtM=0;BlkCtM<BlksM-1;BlkCtM++){
     gemmblkirregccc(abuffer+MCT*kdim,bblk,cheadpos+MCT,LDC,BlkDimM,ndim,kdim,beta);
@@ -86,7 +86,7 @@ void gemmcolumnirreg(FLOAT *abuffer,FLOAT *bblk,FLOAT *cheadpos,int BlksM,int Ed
   }
   gemmblkirregccc(abuffer+MCT*kdim,bblk,cheadpos+MCT,LDC,EdgeM,ndim,kdim,beta);
 }
-void cmultbeta(FLOAT *c,int ldc,int m,int n,FLOAT beta){
+static void cmultbeta(FLOAT *c,int ldc,int m,int n,FLOAT beta){
   int i,j;FLOAT *C0,*C;
   C0=c;
   for(i=0;i<n;i++){
