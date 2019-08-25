@@ -1,4 +1,4 @@
-﻿void load_irreg_a_c(FLOAT* __restrict__ astartpos,FLOAT* __restrict__ ablk,int lda,int mdim,int kdim){//sparse lazy mode
+﻿void load_irreg_a_c(FLOAT * __restrict__ astartpos,FLOAT * __restrict__ ablk,int lda,int mdim,int kdim){//sparse lazy mode
   int acol,arow;FLOAT *aread,*awrite;
   aread=astartpos;awrite=ablk;
   for(acol=0;acol<kdim;acol++){
@@ -11,7 +11,7 @@
     aread+=lda;awrite+=BlkDimM;
   }
 }
-void load_irreg_a_r(FLOAT* __restrict__ ,FLOAT* __restrict__ ablk,int lda,int mdim,int kdim){//sparse lazy mode
+void load_irreg_a_r(FLOAT * __restrict__ ,FLOAT * __restrict__ ablk,int lda,int mdim,int kdim){//sparse lazy mode
   int acol,arow;FLOAT *aread,*awrite;
   aread=astartpos;awrite=ablk;
   for(arow=0;arow<mdim;arow++){
@@ -28,7 +28,7 @@ void load_irreg_a_r(FLOAT* __restrict__ ,FLOAT* __restrict__ ablk,int lda,int md
   }
 }
 void load_reg_a_c(FLOAT *astartpos,FLOAT *ablk,int lda){load_irreg_a_c(astartpos,ablk,lda,BlkDimM,BlkDimK);}
-void load_reg_a_r(FLOAT* __restrict__ astartpos,FLOAT* __restrict__ ablk,int lda){
+void load_reg_a_r(FLOAT * __restrict__ astartpos,FLOAT * __restrict__ ablk,int lda){
   int acol,arow;FLOAT *ar1,*ar2,*ar3,*ar4,*awrite;
   for(arow=0;arow<BlkDimM;arow+=4){
     ar1=astartpos+arow*lda;
@@ -47,7 +47,7 @@ void load_tail_a_c(FLOAT *astartpos,FLOAT *ablk,int lda,int mdim){load_irreg_a_c
 void load_tail_a_r(FLOAT *astartpos,FLOAT *ablk,int lda,int mdim){load_irreg_a_r(astartpos,ablk,lda,mdim,BlkDimK);}
 void load_irregk_a_c(FLOAT *astartpos,FLOAT *ablk,int lda,int kdim){load_irreg_a_c(astartpos,ablk,lda,BlkDimM,kdim);}
 void load_irregk_a_r(FLOAT *astartpos,FLOAT *ablk,int lda,int kdim){load_irreg_a_r(astartpos,ablk,lda,BlkDimM,kdim);}
-void load_reg_b_c(FLOAT* __restrict__ bstartpos,FLOAT* __restrict__ bblk,int ldb,FLOAT* __restrict__ alpha){
+void load_reg_b_c(FLOAT * __restrict__ bstartpos,FLOAT * __restrict__ bblk,int ldb,FLOAT * __restrict__ alpha){
  FLOAT *inb1,*inb2,*inb3,*inb4,*outb;
  int bcol,brow;
  outb=bblk;
@@ -109,7 +109,7 @@ void load_reg_b_c(FLOAT* __restrict__ bstartpos,FLOAT* __restrict__ bblk,int ldb
  #define STOREVEC _mm_storeu_ps
  #define BROADVEC _mm_broadcast_ss
 #endif
-void load_reg_b_r(FLOAT* __restrict__ bstartpos,FLOAT* __restrict__ bblk,int ldb,FLOAT* __restrict__ alpha){
+void load_reg_b_r(FLOAT * __restrict__ bstartpos,FLOAT * __restrict__ bblk,int ldb,FLOAT * __restrict__ alpha){
   register FLOATVEC bi1,bi2,bi3,bi4,bt1,bt2,bt3,bt4,bb;
   FLOAT *bin1,*bin2,*bin3,*bin4,*bout;int bcol,brow;
   bb=BROADVEC(alpha);
@@ -186,7 +186,7 @@ void load_reg_b_r(FLOAT* __restrict__ bstartpos,FLOAT* __restrict__ bblk,int ldb
     bin1+=bshift;bin2+=bshift;bin3+=bshift;bin4+=bshift;
   }
 }
-void load_irreg_b_c(FLOAT* __restrict__ bstartpos,FLOAT* __restrict__ bblk,int ldb,int ndim,int kdim,FLOAT* __restrict__ alpha){//dense rearr(old) lazy mode
+void load_irreg_b_c(FLOAT * __restrict__ bstartpos,FLOAT * __restrict__ bblk,int ldb,int ndim,int kdim,FLOAT * __restrict__ alpha){//dense rearr(old) lazy mode
   FLOAT *bin1,*bin2,*bin3,*bin4,*bout;int bcol,brow;
   bin1=bstartpos;bin2=bin1+ldb;bin3=bin2+ldb;bin4=bin3+ldb;bout=bblk;
   for(bcol=0;bcol<ndim-3;bcol+=4){
@@ -208,7 +208,7 @@ void load_irreg_b_c(FLOAT* __restrict__ bstartpos,FLOAT* __restrict__ bblk,int l
     bin1+=ldb-kdim;
   }
 }
-void load_irreg_b_r(FLOAT* __restrict__ bstartpos,FLOAT* __restrict__ bblk,int ldb,int ndim,int kdim,FLOAT* __restrict__ alpha){//dense rearr(old) lazy mode
+void load_irreg_b_r(FLOAT * __restrict__ bstartpos,FLOAT * __restrict__ bblk,int ldb,int ndim,int kdim,FLOAT * __restrict__ alpha){//dense rearr(old) lazy mode
   FLOAT *bin,*bout;int bcol,brow;register FLOATVEC btmp,bmul;
   bin=bstartpos;bmul=BROADVEC(alpha);
   for(brow=0;brow<kdim;brow++){
