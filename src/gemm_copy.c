@@ -11,7 +11,7 @@
     aread+=lda;awrite+=BlkDimM;
   }
 }
-void load_irreg_a_r(FLOAT * __restrict__ ,FLOAT * __restrict__ ablk,int lda,int mdim,int kdim){//sparse lazy mode
+void load_irreg_a_r(FLOAT * __restrict__ astartpos,FLOAT * __restrict__ ablk,int lda,int mdim,int kdim){//sparse lazy mode
   int acol,arow;FLOAT *aread,*awrite;
   aread=astartpos;awrite=ablk;
   for(arow=0;arow<mdim;arow++){
