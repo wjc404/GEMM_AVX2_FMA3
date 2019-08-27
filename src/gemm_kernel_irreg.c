@@ -51,18 +51,33 @@
    c3=IRREG_VEC_ZERO();_mm_prefetch((char *)(ctemp+96/IRREG_SIZE-1),_MM_HINT_T0);\
 }
 #define INIT_4col {\
-   c1=IRREG_VEC_ZERO();_mm_prefetch((char *)cpref,_MM_HINT_T0);\
-   c2=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+64/IRREG_SIZE),_MM_HINT_T0);\
-   c3=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+96/IRREG_SIZE-1),_MM_HINT_T0);cpref+=ldc;\
-   c4=IRREG_VEC_ZERO();_mm_prefetch((char *)cpref,_MM_HINT_T0);\
-   c5=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+64/IRREG_SIZE),_MM_HINT_T0);\
-   c6=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+96/IRREG_SIZE-1),_MM_HINT_T0);cpref+=ldc;\
-   c7=IRREG_VEC_ZERO();_mm_prefetch((char *)cpref,_MM_HINT_T0);\
-   c8=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+64/IRREG_SIZE),_MM_HINT_T0);\
-   c9=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+96/IRREG_SIZE-1),_MM_HINT_T0);cpref+=ldc;\
-   c10=IRREG_VEC_ZERO();_mm_prefetch((char *)cpref,_MM_HINT_T0);\
-   c11=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+64/IRREG_SIZE),_MM_HINT_T0);\
-   c12=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+96/IRREG_SIZE-1),_MM_HINT_T0);cpref+=ldc;\
+   c1=IRREG_VEC_ZERO();_mm_prefetch((char *)cpref,_MM_HINT_T1);\
+   c2=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+64/IRREG_SIZE),_MM_HINT_T1);\
+   c3=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+96/IRREG_SIZE-1),_MM_HINT_T1);cpref+=ldc;\
+   c4=IRREG_VEC_ZERO();_mm_prefetch((char *)cpref,_MM_HINT_T1);\
+   c5=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+64/IRREG_SIZE),_MM_HINT_T1);\
+   c6=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+96/IRREG_SIZE-1),_MM_HINT_T1);cpref+=ldc;\
+   c7=IRREG_VEC_ZERO();_mm_prefetch((char *)cpref,_MM_HINT_T1);\
+   c8=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+64/IRREG_SIZE),_MM_HINT_T1);\
+   c9=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+96/IRREG_SIZE-1),_MM_HINT_T1);cpref+=ldc;\
+   c10=IRREG_VEC_ZERO();_mm_prefetch((char *)cpref,_MM_HINT_T1);\
+   c11=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+64/IRREG_SIZE),_MM_HINT_T1);\
+   c12=IRREG_VEC_ZERO();_mm_prefetch((char *)(cpref+96/IRREG_SIZE-1),_MM_HINT_T1);cpref+=ldc;\
+}
+#define PREFT0_4col {\
+   cpref-=4*ldc;\
+   _mm_prefetch((char *)cpref,_MM_HINT_T0);\
+   _mm_prefetch((char *)(cpref+64/IRREG_SIZE),_MM_HINT_T0);\
+   _mm_prefetch((char *)(cpref+96/IRREG_SIZE-1),_MM_HINT_T0);cpref+=ldc;\
+   _mm_prefetch((char *)cpref,_MM_HINT_T0);\
+   _mm_prefetch((char *)(cpref+64/IRREG_SIZE),_MM_HINT_T0);\
+   _mm_prefetch((char *)(cpref+96/IRREG_SIZE-1),_MM_HINT_T0);cpref+=ldc;\
+   _mm_prefetch((char *)cpref,_MM_HINT_T0);\
+   _mm_prefetch((char *)(cpref+64/IRREG_SIZE),_MM_HINT_T0);\
+   _mm_prefetch((char *)(cpref+96/IRREG_SIZE-1),_MM_HINT_T0);cpref+=ldc;\
+   _mm_prefetch((char *)cpref,_MM_HINT_T0);\
+   _mm_prefetch((char *)(cpref+64/IRREG_SIZE),_MM_HINT_T0);\
+   _mm_prefetch((char *)(cpref+96/IRREG_SIZE-1),_MM_HINT_T0);cpref+=ldc;\
 }
 #define KERNELkr {\
    a1=IRREG_VEC_LOADA(atemp);atemp+=32/IRREG_SIZE;\
@@ -121,12 +136,17 @@ static void gemmblkirregnccc(FLOAT * __restrict__ ablk,FLOAT * __restrict__ bblk
    cpref=ctemp;
    INIT_4col
    atemp=ablk;
-   for(acol=0;acol<BlkDimK;acol+=8){//loop over ablk-columns, load 1 column of ablk in each micro-iteration.
+   for(acol=0;acol<BlkDimK-8;acol+=8){//loop over ablk-columns, load 1 column of ablk in each micro-iteration.
     KERNELk2
     KERNELk2
     KERNELk2
     KERNELk2
    }
+   PREFT0_4col
+   KERNELk2
+   KERNELk2
+   KERNELk2
+   KERNELk2
    LOAD_C_1col
    c1=IRREG_VEC_ADD(a1,c1);c2=IRREG_VEC_ADD(a2,c2);c3=IRREG_VEC_ADD(a3,c3);
    STORE_C_1col(c1,c2,c3)
